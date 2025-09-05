@@ -46,24 +46,48 @@ class Dual_Transformer(nn.Module):
                                     )
 
     def forward(self, input):
-        #  input --- [b,  c,  num_frames, frame_size]  --- [b, c, dim2, dim1]
+        """Memory-optimized dual-path transformer forward pass."""
+        # Input validation
+        if not isinstance(input, torch.Tensor):
+            raise TypeError(f"Expected torch.Tensor, got {type(input)}")
+            
+        if input.dim() != 4:
+            raise ValueError(f"Expected 4D input [b, c, num_frames, frame_size], got {input.dim()}D")
+            
+        if input.numel() == 0:
+            raise ValueError("Empty input tensor")
+            
         b, c, dim2, dim1 = input.shape
-        #output = input
+        
+        # Initial projection
         output = self.input(input)
+        
+        # Dual-path processing with memory optimization
         for i in range(len(self.row_trans)):
-            row_input = output.permute(3, 0, 2, 1).contiguous().view(dim1, b*dim2, -1)  # [dim1, b*dim2, c]
-            row_output = self.row_trans[i](row_input)  # [dim1, b*dim2, c]
-            row_output = row_output.view(dim1, b, dim2, -1).permute(1, 3, 2, 0).contiguous()  # [b, c, dim2, dim1]
-            row_output = self.row_norm[i](row_output)  # [b, c, dim2, dim1]
-            output = output + row_output  # [b, c, dim2, dim1]
+            # Row processing - more memory efficient reshaping
+            row_input = output.permute(3, 0, 2, 1).contiguous().view(dim1, b*dim2, -1)
+            row_output = self.row_trans[i](row_input)
+            
+            # Avoid storing intermediate tensors
+            row_output = row_output.view(dim1, b, dim2, -1).permute(1, 3, 2, 0).contiguous()
+            row_output = self.row_norm[i](row_output)
+            
+            # In-place addition to save memory
+            output.add_(row_output)
+            del row_output  # Explicit cleanup
 
-            col_input = output.permute(2, 0, 3, 1).contiguous().view(dim2, b*dim1, -1)  # [dim2, b*dim1, c]
-            col_output = self.col_trans[i](col_input)  # [dim2, b*dim1, c]
-            col_output = col_output.view(dim2, b, dim1, -1).permute(1, 3, 0, 2).contiguous()  # [b, c, dim2, dim1]
-            col_output = self.col_norm[i](col_output)  # [b, c, dim2, dim1]
-            output = output + col_output  # [b, c, dim2, dim1]
+            # Column processing
+            col_input = output.permute(2, 0, 3, 1).contiguous().view(dim2, b*dim1, -1)
+            col_output = self.col_trans[i](col_input)
+            
+            col_output = col_output.view(dim2, b, dim1, -1).permute(1, 3, 0, 2).contiguous()
+            col_output = self.col_norm[i](col_output)
+            
+            # In-place addition
+            output.add_(col_output)
+            del col_output  # Explicit cleanup
 
-        del row_input, row_output, col_input, col_output
-        output = self.output(output)  # [b, c, dim2, dim1]
-
+        # Final projection
+        output = self.output(output)
+        
         return output

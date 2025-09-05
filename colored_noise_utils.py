@@ -7,8 +7,7 @@ from numpy.fft import rfft, irfft
 from scipy.io import wavfile
 import torchaudio
 
-# Set Audio backend as Sounfile for windows and Sox for Linux
-torchaudio.set_audio_backend("sox_io")
+# Audio backend is now automatically selected based on available dependencies
 
 def ms(x):
     return (np.abs(x)**2).mean()

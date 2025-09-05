@@ -23,8 +23,7 @@ noise_class_dictionary = {
 9 : "street_music"
 }
 
-# Set Audio backend as Sounfile for windows and Sox for Linux
-torchaudio.set_audio_backend("sox_io")
+# Audio backend is now automatically selected based on available dependencies
 
 def resample(original, old_rate, new_rate):
     if old_rate != new_rate:
