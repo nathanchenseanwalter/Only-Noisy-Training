@@ -186,8 +186,8 @@ def makeCorruptedFile_differenttype(filename,dest, noise_type,snr):
             pass
 
 
-Urban8Kdir = "/F/n2n/Datasets/UrbanSound8K/audio/"
-target_folder = "/F/n2n/Datasets/clean_trainset_28spk_wav"
+Urban8Kdir = "Datasets/UrbanSound8K/audio/"
+target_folder = "Datasets/clean_trainset_28spk_wav"
 
 for key in noise_class_dictionary:
     print("\t{} : {}".format(key, noise_class_dictionary[key]))

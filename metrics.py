@@ -3,7 +3,7 @@ import numpy as np
 from scipy.io import wavfile
 from scipy import interpolate
 from scipy.linalg import solve_toeplitz,toeplitz
-from pypesq import pesq
+from pesq import pesq
 from pystoi import stoi
 import random
 

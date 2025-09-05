@@ -3,7 +3,7 @@ from scipy.linalg import solve_toeplitz,toeplitz
 from scipy import interpolate
 from scipy.signal import stft,get_window,correlate,resample
 import numpy as np
-import pesq as pypesq
+import pesq
 from numba import jit
 import copy
 
@@ -257,12 +257,12 @@ def pesq(clean_speech, processed_speech, fs, force_resample=True):
         processed_speech = resample(processed_speech, fs, 16000)
         fs = 16000
     if fs == 8000:
-        mos_lqo = pypesq.pesq(fs,clean_speech, processed_speech, 'nb')
+        mos_lqo = pesq.pesq(fs,clean_speech, processed_speech, 'nb')
         if mos_lqo >4.5:
             mos_lqo = 4.5
         pesq_mos = 46607/14945 - (2000*np.log(1/(mos_lqo/4 - 999/4000) - 1))/2989
     elif fs == 16000:
-        mos_lqo = pypesq.pesq(fs,clean_speech, processed_speech, 'wb')
+        mos_lqo = pesq.pesq(fs,clean_speech, processed_speech, 'wb')
         if mos_lqo >4.5:
             mos_lqo = 4.5
         pesq_mos = np.NaN

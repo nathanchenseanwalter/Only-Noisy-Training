@@ -42,23 +42,23 @@ HOP_LENGTH = 256
 
 ######################################## Datasets setting #########################################
 # Choose white noise or different noise types in urbansound8K
-noise_class = "0"
+noise_class = "white"
 
 # Load white noise
 if noise_class == "white":
-    TRAIN_INPUT_DIR = Path('/home/abc/n2n/Datasets/WhiteNoise_Train_Input')
-    TRAIN_TARGET_DIR = Path('/home/abc/n2n/Datasets/WhiteNoise_Train_Output')
+    TRAIN_INPUT_DIR = Path('Datasets/WhiteNoise_Train_Input')
+    TRAIN_TARGET_DIR = Path('Datasets/WhiteNoise_Train_Output')
 
-    TEST_NOISY_DIR = Path('/home/abc/n2n/Datasets/WhiteNoise_Test_Input')
-    TEST_CLEAN_DIR = Path('/home/abc/n2n/Datasets/clean_testset_wav')
+    TEST_NOISY_DIR = Path('Datasets/WhiteNoise_Test_Input')
+    TEST_CLEAN_DIR = Path('Datasets/clean_testset_wav')
 
 # Load urbansound8K noise
 else:
-    TRAIN_INPUT_DIR = Path('/home/abc/n2n/Datasets/US_Class' + str(noise_class) + '_Train_Input')
-    TRAIN_TARGET_DIR = Path('/home/abc/n2n/Datasets/US_Class' + str(noise_class) + '_Train_Output')
+    TRAIN_INPUT_DIR = Path('Datasets/US_Class' + str(noise_class) + '_Train_Input')
+    TRAIN_TARGET_DIR = Path('Datasets/US_Class' + str(noise_class) + '_Train_Output')
 
-    TEST_NOISY_DIR = Path('/home/abc/n2n/Datasets/US_Class' + str(noise_class) + '_Test_Input')
-    TEST_CLEAN_DIR = Path('/home/abc/n2n/Datasets/clean_testset_wav')
+    TEST_NOISY_DIR = Path('Datasets/US_Class' + str(noise_class) + '_Test_Input')
+    TEST_CLEAN_DIR = Path('Datasets/clean_testset_wav')
 
 train_input_files = sorted(list(TRAIN_INPUT_DIR.rglob('*.wav')))
 train_target_files = sorted(list(TRAIN_TARGET_DIR.rglob('*.wav')))
@@ -70,7 +70,7 @@ print("No. of Training files:",len(train_input_files))
 print("No. of Testing files:",len(test_noisy_files))
 
 basepath = str(noise_class)
-fixedpath = '/home/abc/n2n/SNA-DF/DCUnet10_complex_TSTM_subsample2/'
+fixedpath = 'SNA-DF/DCUnet10_complex_TSTM_subsample2/'
 
 os.makedirs(fixedpath + basepath,exist_ok=True)
 os.makedirs(fixedpath + basepath+"/Weights",exist_ok=True)
